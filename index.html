@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clawdbot — AI for Your Business</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAF8;
+    --bg-warm: #F5F4F0;
+    --surface: #FFFFFF;
+    --surface-dim: #F0EFEB;
+    --border: rgba(0,0,0,0.06);
+    --border-strong: rgba(0,0,0,0.1);
+    --fg: #1A1A1A;
+    --fg-secondary: #5A5A5A;
+    --fg-muted: #8A8A8A;
+    --fg-dim: #B0B0B0;
+    --accent: #2A5CFF;
+    --accent-soft: rgba(42,92,255,0.06);
+    --accent-medium: rgba(42,92,255,0.1);
+    --accent-hover: #1A4AE0;
+    --success: #1DB954;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'DM Sans', -apple-system, sans-serif;
+    --radius: 12px;
+    --radius-lg: 20px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 20px rgba(0,0,0,0.06);
+    --shadow-lg: 0 12px 40px rgba(0,0,0,0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  ::selection { background: var(--accent); color: #fff; }
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--fg);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  .container {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* === NAV === */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    height: 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 32px;
+    background: rgba(250,250,248,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nav-logo {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 17px;
+    letter-spacing: -0.3px;
+    color: var(--fg);
+  }
+
+  .nav-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 3px 10px;
+    border-radius: 100px;
+    letter-spacing: 0.5px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--fg-secondary);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--fg); }
+
+  .nav-cta {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff !important;
+    background: var(--fg);
+    padding: 9px 22px;
+    border-radius: 100px;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+  }
+
+  .nav-cta:hover {
+    background: #333;
+    transform: translateY(-1px);
+  }
+
+  /* === HERO === */
+  .hero {
+    padding: 160px 24px 100px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -120px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 600px;
+    background: radial-gradient(ellipse, rgba(42,92,255,0.04) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-medium);
+    padding: 6px 16px;
+    border-radius: 100px;
+    margin-bottom: 32px;
+  }
+
+  .hero-pill .dot {
+    width: 6px;
+    height: 6px;
+    background: var(--success);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .hero h1 {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: clamp(40px, 6vw, 64px);
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    color: var(--fg);
+    margin-bottom: 24px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-sub {
+    font-size: 17px;
+    font-weight: 300;
+    color: var(--fg-secondary);
+    max-width: 520px;
+    margin: 0 auto 40px;
+    line-height: 1.65;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 64px;
+  }
+
+  .btn-primary {
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 500;
+    color: #fff;
+    background: var(--accent);
+    padding: 13px 28px;
+    border-radius: 100px;
+    text-decoration: none;
+    transition: all 0.25s;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(42,92,255,0.2);
+  }
+
+  .btn-primary:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(42,92,255,0.25);
+  }
+
+  .btn-ghost {
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--fg-secondary);
+    background: transparent;
+    padding: 13px 28px;
+    border-radius: 100px;
+    text-decoration: none;
+    border: 1px solid var(--border-strong);
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--fg-muted);
+    color: var(--fg);
+  }
+
+  /* === HERO VISUAL === */
+  .hero-visual {
+    max-width: 900px;
+    margin: 0 auto;
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    padding: 40px;
+    position: relative;
+  }
+
+  .terminal-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .terminal-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--surface-dim);
+  }
+
+  .terminal-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-muted);
+    margin-left: 8px;
+  }
+
+  .terminal-body {
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 2;
+    color: var(--fg-secondary);
+  }
+
+  .terminal-body .cmd {
+    color: var(--fg-muted);
+    user-select: none;
+  }
+
+  .terminal-body .highlight {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .terminal-body .success {
+    color: var(--success);
+  }
+
+  .terminal-body .dim {
+    color: var(--fg-dim);
+  }
+
+  /* === TRUST === */
+  .trust-section {
+    padding: 48px 0;
+    text-align: center;
+  }
+
+  .trust-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .trust-stats {
+    display: flex;
+    justify-content: center;
+    gap: 64px;
+    align-items: center;
+  }
+
+  .trust-stat .number {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 32px;
+    letter-spacing: -1px;
+    color: var(--fg);
+  }
+
+  .trust-stat .label {
+    font-size: 13px;
+    color: var(--fg-muted);
+    margin-top: 2px;
+  }
+
+  .trust-divider {
+    width: 1px;
+    height: 40px;
+    background: var(--border-strong);
+  }
+
+  /* === SECTION === */
+  section {
+    padding: 100px 0;
+  }
+
+  .section-header {
+    margin-bottom: 56px;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: clamp(28px, 4vw, 40px);
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+    color: var(--fg);
+    margin-bottom: 16px;
+  }
+
+  .section-desc {
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--fg-secondary);
+    max-width: 520px;
+    line-height: 1.6;
+  }
+
+  /* === FEATURES GRID === */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .feature-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 36px 28px;
+    transition: all 0.25s;
+  }
+
+  .feature-card:hover {
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  .feature-icon {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-soft);
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-size: 18px;
+  }
+
+  .feature-card h3 {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 10px;
+    letter-spacing: -0.2px;
+  }
+
+  .feature-card p {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--fg-secondary);
+    line-height: 1.6;
+  }
+
+  /* === HOW IT WORKS === */
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+  }
+
+  .step-card {
+    position: relative;
+  }
+
+  .step-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    background: var(--accent-soft);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+
+  .step-card h3 {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 10px;
+    letter-spacing: -0.2px;
+  }
+
+  .step-card p {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--fg-secondary);
+    line-height: 1.65;
+  }
+
+  /* === PRICING === */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    max-width: 780px;
+  }
+
+  .price-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 40px 32px;
+    position: relative;
+    transition: all 0.25s;
+  }
+
+  .price-card:hover {
+    box-shadow: var(--shadow-md);
+  }
+
+  .price-card.featured {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent), var(--shadow-md);
+  }
+
+  .price-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 4px 10px;
+    border-radius: 100px;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    margin-bottom: 20px;
+  }
+
+  .price-label {
+    font-size: 13px;
+    color: var(--fg-muted);
+    margin-bottom: 8px;
+  }
+
+  .price-amount {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 44px;
+    letter-spacing: -2px;
+    color: var(--fg);
+    margin-bottom: 4px;
+  }
+
+  .price-amount span {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--fg-muted);
+    letter-spacing: 0;
+  }
+
+  .price-desc {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--fg-secondary);
+    line-height: 1.5;
+    margin-bottom: 28px;
+  }
+
+  .price-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .price-list li {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--fg-secondary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    line-height: 1.4;
+  }
+
+  .check {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-soft);
+    border-radius: 50%;
+    flex-shrink: 0;
+    font-size: 10px;
+    color: var(--accent);
+  }
+
+  /* === FAQ === */
+  .faq-list {
+    max-width: 640px;
+  }
+
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+    padding: 20px 0;
+    cursor: pointer;
+  }
+
+  .faq-q {
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--fg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .faq-toggle {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--surface-dim);
+    font-size: 14px;
+    color: var(--fg-muted);
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .faq-item.open .faq-toggle {
+    background: var(--accent-soft);
+    color: var(--accent);
+    transform: rotate(45deg);
+  }
+
+  .faq-a {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--fg-secondary);
+    line-height: 1.65;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    padding-top: 0;
+  }
+
+  .faq-item.open .faq-a {
+    max-height: 200px;
+    padding-top: 14px;
+  }
+
+  /* === FINAL CTA === */
+  .final-cta {
+    text-align: center;
+    padding: 100px 24px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .final-cta h2 {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: clamp(32px, 5vw, 48px);
+    line-height: 1.1;
+    letter-spacing: -1px;
+    color: var(--fg);
+    margin-bottom: 16px;
+  }
+
+  .final-cta p {
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--fg-secondary);
+    max-width: 440px;
+    margin: 0 auto 36px;
+    line-height: 1.6;
+  }
+
+  /* === FOOTER === */
+  footer {
+    padding: 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  footer span {
+    font-size: 13px;
+    color: var(--fg-dim);
+  }
+
+  footer a {
+    font-size: 13px;
+    color: var(--fg-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  footer a:hover { color: var(--fg); }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 768px) {
+    nav { padding: 0 16px; }
+    .nav-links { display: none; }
+    .features-grid { grid-template-columns: 1fr; }
+    .steps-grid { grid-template-columns: 1fr; gap: 32px; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .trust-stats { flex-direction: column; gap: 24px; }
+    .trust-divider { width: 40px; height: 1px; }
+    .hero-ctas { flex-direction: column; width: 100%; max-width: 320px; margin-left: auto; margin-right: auto; }
+    .btn-primary, .btn-ghost { width: 100%; text-align: center; }
+    footer { flex-direction: column; gap: 8px; text-align: center; }
+    .hero-visual { padding: 24px; }
+  }
+
+  /* === ANIMATIONS === */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate {
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  .d1 { animation-delay: 0.05s; }
+  .d2 { animation-delay: 0.1s; }
+  .d3 { animation-delay: 0.15s; }
+  .d4 { animation-delay: 0.2s; }
+  .d5 { animation-delay: 0.3s; }
+  .d6 { animation-delay: 0.4s; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-left">
+    <span class="nav-logo">clawdbot</span>
+    <span class="nav-badge">DFW</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#book" class="nav-cta">Book install</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-pill animate d1">
+    <span class="dot"></span>
+    Now installing across DFW
+  </div>
+
+  <h1 class="animate d2">An AI employee that<br>never clocks out.</h1>
+
+  <p class="hero-sub animate d3">
+    We install a dedicated AI system in your office. It handles your operations 24/7 — scheduling, follow-ups, invoicing, customer comms. Hardware you own. No cloud dependency.
+  </p>
+
+  <div class="hero-ctas animate d4">
+    <a href="#book" class="btn-primary">Schedule your install</a>
+    <a href="#how" class="btn-ghost">See how it works</a>
+  </div>
+
+  <div class="hero-visual animate d5">
+    <div class="terminal-header">
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <span class="terminal-label">clawdbot — active</span>
+    </div>
+    <div class="terminal-body">
+      <span class="dim">09:01 AM</span> &nbsp; <span class="highlight">New lead</span> from Google Ads — auto-replied in 12s<br>
+      <span class="dim">09:14 AM</span> &nbsp; Invoice #1087 sent to Martinez Roofing — <span class="success">paid</span><br>
+      <span class="dim">09:22 AM</span> &nbsp; Rescheduled Johnson consult → Tue 2:30 PM<br>
+      <span class="dim">10:01 AM</span> &nbsp; <span class="highlight">Weekly report</span> compiled — revenue up 18% WoW<br>
+      <span class="dim">10:45 AM</span> &nbsp; Follow-up sent to 6 cold leads from last Thursday<br>
+      <span class="dim">11:30 AM</span> &nbsp; Appointment confirmed: Davis Electric, Wed 10 AM<br>
+      <span class="dim">12:00 PM</span> &nbsp; <span class="success">✓ All tasks running</span> &nbsp; <span class="dim">0 issues &nbsp; 47 actions today</span>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST -->
+<div class="container">
+  <div class="trust-section">
+    <div class="trust-label">Built for small businesses in Dallas–Fort Worth</div>
+    <div class="trust-stats">
+      <div class="trust-stat">
+        <div class="number">24/7</div>
+        <div class="label">Always running</div>
+      </div>
+      <div class="trust-divider"></div>
+      <div class="trust-stat">
+        <div class="number">&lt;2 hrs</div>
+        <div class="label">Install time</div>
+      </div>
+      <div class="trust-divider"></div>
+      <div class="trust-stat">
+        <div class="number">$0</div>
+        <div class="label">Per-user fees</div>
+      </div>
+      <div class="trust-divider"></div>
+      <div class="trust-stat">
+        <div class="number">Local</div>
+        <div class="label">On-site service</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="container" id="features">
+  <div class="section-header">
+    <div class="section-label">What you get</div>
+    <h2 class="section-title">A dedicated AI system.<br>Installed in your office.</h2>
+    <p class="section-desc">Not another app to log into. Physical hardware running in your space, configured for your business, handling real work while you focus on growth.</p>
+  </div>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">⬡</div>
+      <h3>Dedicated hardware</h3>
+      <p>Mac Mini installed at your location. Runs locally with no reliance on third-party servers. You own it outright.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">◈</div>
+      <h3>Custom configuration</h3>
+      <p>Set up for your specific workflows — lead follow-up, scheduling, invoicing, customer comms. Whatever your bottleneck is.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">◎</div>
+      <h3>Runs without you</h3>
+      <p>Once installed, it operates autonomously. No IT team required. No employee to manage. Works while you sleep.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⬢</div>
+      <h3>Connects to your tools</h3>
+      <p>Integrates with your email, calendar, CRM, phone system — whatever you already use. Zero workflow disruption.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">◇</div>
+      <h3>On-site installation</h3>
+      <p>We come to your office. Set up hardware, configure the system, test everything, walk you through it. Same day operational.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⊞</div>
+      <h3>Monthly optimization</h3>
+      <p>We review performance, tune workflows, and add new automations. Your system gets smarter every single month.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="container" id="how" style="padding-top: 40px;">
+  <div class="section-header">
+    <div class="section-label">How it works</div>
+    <h2 class="section-title">Three steps. One visit.<br>You're operational.</h2>
+    <p class="section-desc">No 6-month implementation. No onboarding meetings. We show up, install, and you're running the same day.</p>
+  </div>
+
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-num">01</div>
+      <h3>Quick discovery</h3>
+      <p>15-minute call. We identify the tasks eating your time with zero leverage — the exact workflows we'll automate first.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">02</div>
+      <h3>On-site install</h3>
+      <p>We bring the hardware to your office, configure every integration, and run live tests with your actual data and tools.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">03</div>
+      <h3>Ongoing improvement</h3>
+      <p>Monthly check-ins to review, optimize, and expand. New automations added as your business evolves. We stay with you.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="container" id="pricing">
+  <div class="section-header">
+    <div class="section-label">Pricing</div>
+    <h2 class="section-title">Simple. Transparent.</h2>
+    <p class="section-desc">One setup fee. One monthly cost. Less than a part-time hire that still makes mistakes.</p>
+  </div>
+
+  <div class="pricing-grid">
+    <div class="price-card featured">
+      <div class="price-tag">One-time</div>
+      <div class="price-label">Setup + Installation</div>
+      <div class="price-amount">$3,000</div>
+      <p class="price-desc">Hardware, on-site install, full configuration, and training included.</p>
+      <ul class="price-list">
+        <li><span class="check">✓</span> Mac Mini hardware (yours to keep)</li>
+        <li><span class="check">✓</span> On-site installation in DFW</li>
+        <li><span class="check">✓</span> Custom AI configuration</li>
+        <li><span class="check">✓</span> Full tool integration</li>
+        <li><span class="check">✓</span> Same-day operational</li>
+      </ul>
+    </div>
+    <div class="price-card">
+      <div class="price-tag">Monthly</div>
+      <div class="price-label">Ongoing Service</div>
+      <div class="price-amount">$250 <span>/mo</span></div>
+      <p class="price-desc">Continuous optimization, support, and system expansion. Cancel anytime.</p>
+      <ul class="price-list">
+        <li><span class="check">✓</span> Monthly performance review</li>
+        <li><span class="check">✓</span> Workflow optimization</li>
+        <li><span class="check">✓</span> New automation buildouts</li>
+        <li><span class="check">✓</span> Priority support</li>
+        <li><span class="check">✓</span> System health monitoring</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="container" id="faq" style="padding-bottom: 60px;">
+  <div class="section-header">
+    <div class="section-label">FAQ</div>
+    <h2 class="section-title">Common questions</h2>
+  </div>
+
+  <div class="faq-list">
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">What exactly does Clawdbot do? <span class="faq-toggle">+</span></div>
+      <div class="faq-a">It's a physical AI system installed in your office that automates repetitive business operations — email responses, scheduling, lead follow-up, data entry, invoicing, customer support. Whatever's eating your time and not generating revenue.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Do I need any technical knowledge? <span class="faq-toggle">+</span></div>
+      <div class="faq-a">No. We handle everything — install, setup, configuration, integrations. You continue running your business as normal. The system works in the background.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">How is this different from ChatGPT? <span class="faq-toggle">+</span></div>
+      <div class="faq-a">ChatGPT is a chat window you manually use. Clawdbot is an always-on system that acts on its own — monitoring inboxes, responding to leads, executing tasks. It's the difference between having a search engine and having an employee.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">What kind of ROI can I expect? <span class="faq-toggle">+</span></div>
+      <div class="faq-a">Most businesses recover the setup cost within 30 days through time saved alone. At $250/month, you're paying less than a single hour of a part-time employee per week for 24/7 automation.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">What happens if something breaks? <span class="faq-toggle">+</span></div>
+      <div class="faq-a">Your monthly service includes priority support and system health monitoring. We catch issues before you do, and if anything needs attention, we handle it remotely or on-site.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Is my data secure? <span class="faq-toggle">+</span></div>
+      <div class="faq-a">Your data lives on hardware in your office — not on a shared cloud server. You control it entirely. Nothing leaves your network unless you configure it to.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta" id="book">
+  <h2>Ready to stop doing<br>the work twice?</h2>
+  <p>Book a 15-minute call. We'll identify your highest-leverage automations and schedule your install.</p>
+  <a href="#" class="btn-primary" style="font-size: 16px; padding: 15px 36px;">Book your install →</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2026 Clawdbot · Dallas–Fort Worth, TX</span>
+  <a href="https://kyroscapitalpartners.com" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: 6px;">Powered by <span style="font-weight: 500; color: var(--fg-secondary);">KYROS</span></a>
+</footer>
+
+</body>
+</html>
