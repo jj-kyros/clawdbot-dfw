@@ -712,6 +712,55 @@
   .d4 { animation-delay: 0.2s; }
   .d5 { animation-delay: 0.3s; }
   .d6 { animation-delay: 0.4s; }
+
+  /* === ROTATING WORDS === */
+  .rotating-word {
+    display: inline-block;
+    color: var(--accent);
+    position: relative;
+  }
+
+  .rotating-word::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--accent);
+    opacity: 0.3;
+    border-radius: 2px;
+  }
+
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeOutUp {
+    0% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+  }
+
+  .rotating-word.fade-in {
+    animation: fadeInUp 0.4s ease forwards;
+  }
+
+  .rotating-word.fade-out {
+    animation: fadeOutUp 0.4s ease forwards;
+  }
 </style>
 </head>
 <body>
@@ -737,7 +786,7 @@
     Now installing across DFW
   </div>
 
-  <h1 class="animate d2">An AI employee that<br>never clocks out.</h1>
+  <h1 class="animate d2">An AI <span class="rotating-word"></span> that<br>never clocks out.</h1>
 
   <p class="hero-sub animate d3">
     We install a dedicated AI system in your office. It handles your operations 24/7 — scheduling, follow-ups, invoicing, customer comms. Hardware you own. No cloud dependency.
@@ -949,6 +998,31 @@
   <span>© 2026 Clawdbot · Dallas–Fort Worth, TX</span>
   <a href="https://kyroscapitalpartners.com" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: 6px;">Powered by <span style="font-weight: 500; color: var(--fg-secondary);">KYROS</span></a>
 </footer>
+
+<script>
+  const words = ['employee', 'assistant', 'operator', 'team member'];
+  let currentIndex = 0;
+  const rotatingWord = document.querySelector('.rotating-word');
+
+  function rotateWord() {
+    rotatingWord.classList.remove('fade-in');
+    rotatingWord.classList.add('fade-out');
+
+    setTimeout(() => {
+      currentIndex = (currentIndex + 1) % words.length;
+      rotatingWord.textContent = words[currentIndex];
+      rotatingWord.classList.remove('fade-out');
+      rotatingWord.classList.add('fade-in');
+    }, 400);
+  }
+
+  // Initial word
+  rotatingWord.textContent = words[0];
+  rotatingWord.classList.add('fade-in');
+
+  // Rotate every 3 seconds
+  setInterval(rotateWord, 3000);
+</script>
 
 </body>
 </html>
